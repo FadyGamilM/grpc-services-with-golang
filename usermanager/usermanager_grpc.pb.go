@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UserManagerClient interface {
 	// unary service method
 	CreateUser(ctx context.Context, in *NewUser, opts ...grpc.CallOption) (*User, error)
+	GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*Users, error)
 }
 
 type userManagerClient struct {
@@ -43,12 +44,22 @@ func (c *userManagerClient) CreateUser(ctx context.Context, in *NewUser, opts ..
 	return out, nil
 }
 
+func (c *userManagerClient) GetUsers(ctx context.Context, in *GetUsersParams, opts ...grpc.CallOption) (*Users, error) {
+	out := new(Users)
+	err := c.cc.Invoke(ctx, "/usermanager.UserManager/GetUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserManagerServer is the server API for UserManager service.
 // All implementations must embed UnimplementedUserManagerServer
 // for forward compatibility
 type UserManagerServer interface {
 	// unary service method
 	CreateUser(context.Context, *NewUser) (*User, error)
+	GetUsers(context.Context, *GetUsersParams) (*Users, error)
 	mustEmbedUnimplementedUserManagerServer()
 }
 
@@ -58,6 +69,9 @@ type UnimplementedUserManagerServer struct {
 
 func (UnimplementedUserManagerServer) CreateUser(context.Context, *NewUser) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUserManagerServer) GetUsers(context.Context, *GetUsersParams) (*Users, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedUserManagerServer) mustEmbedUnimplementedUserManagerServer() {}
 
@@ -90,6 +104,24 @@ func _UserManager_CreateUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserManager_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserManagerServer).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermanager.UserManager/GetUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserManagerServer).GetUsers(ctx, req.(*GetUsersParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserManager_ServiceDesc is the grpc.ServiceDesc for UserManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +132,10 @@ var UserManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _UserManager_CreateUser_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _UserManager_GetUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
