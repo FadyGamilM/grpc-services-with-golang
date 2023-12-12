@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+// declare the usermanagerb package 
+package usermanager;
+
+option go_package = "github.com/FadyGamilM/usermanagement;usermanagement";
+
+
+
+service UserManager {
+    // unary service method     
+    rpc CreateUser (NewUser) returns (User);    
+}
+
+
+message UserDetails {
+    string username = 1;
+    int32 age = 2;
+}
+
+message NewUser {
+    UserDetails userInfo = 1;
+}
+
+message User {
+    UserDetails userInfo = 1;
+    // user id from db
+    int64 userId = 2;
+}
