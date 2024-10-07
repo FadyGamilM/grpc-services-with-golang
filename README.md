@@ -10,3 +10,5 @@
 
 ### `/server/`
 - we store the server code that will create user resource and returns the user details to the client 
+
+![types-of-api](image.png)

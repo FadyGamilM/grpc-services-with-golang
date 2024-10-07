@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package user.v1;
+
+option go_package = "github.com/FadyGamilM/usermanagement/proto";
+
+message CreateUserRequest {
+    int64 id = 1;
+    string name = 2;
+}
+
+message CreateUserResponse {
+    int64 id = 1;
+    string name = 2;
+    bool activated = 3;
+}
+
+
+service UserService {
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+}
